@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScriptHub — Roblox Scripts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oxanium:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ───────────────────────────────────────────── */
+    :root {
+      --bg:          #07090d;
+      --bg-card:     #0c0f15;
+      --bg-code:     #080a0e;
+      --border:      #161c27;
+      --border-hl:   #243040;
+      --accent:      #00ffcc;
+      --accent-dim:  rgba(0,255,204,0.12);
+      --accent-glow: rgba(0,255,204,0.25);
+      --red:         #ff4466;
+      --red-dim:     rgba(255,68,102,0.12);
+      --gold:        #ffc24a;
+      --gold-dim:    rgba(255,194,74,0.12);
+      --purple:      #b57bff;
+      --purple-dim:  rgba(181,123,255,0.12);
+      --green:       #39e88f;
+      --green-dim:   rgba(57,232,143,0.12);
+      --text:        #dde4f0;
+      --text-muted:  #4e6070;
+      --text-dim:    #222c38;
+      --mono:        'Share Tech Mono', monospace;
+      --display:     'Oxanium', sans-serif;
+      --r:           10px;
+    }
+
+    /* ── Reset ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--display);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated BG grid ─────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,204,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,204,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,255,204,0.055) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ───────────────────────────────────────────── */
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 5rem 1.5rem 3rem;
+    }
+
+    .logo {
+      display: inline-block;
+      font-size: 2.4rem;
+      color: var(--accent);
+      filter: drop-shadow(0 0 14px var(--accent-glow));
+      animation: breathe 4s ease-in-out infinite;
+      margin-bottom: 0.6rem;
+    }
+
+    @keyframes breathe {
+      0%,100% { filter: drop-shadow(0 0 10px var(--accent-glow)); }
+      50%      { filter: drop-shadow(0 0 26px var(--accent-glow)) drop-shadow(0 0 50px rgba(0,255,204,0.1)); }
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: linear-gradient(140deg, #fff 20%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .tagline {
+      margin-top: 0.9rem;
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+
+    .stats {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1.6rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.45rem 1.2rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .stats span { color: var(--accent); }
+    .stats .dot { color: var(--text-dim); }
+
+    /* ── Grid ─────────────────────────────────────────────── */
+    .grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.1rem;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 1.25rem 5rem;
+    }
+
+    /* ── Card ─────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.4rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.18s;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--border-hl);
+      box-shadow: 0 0 0 1px rgba(0,255,204,0.05), 0 12px 40px rgba(0,0,0,0.5);
+      transform: translateY(-3px);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    /* stagger cards */
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.10s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.20s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.30s; }
+    .card:nth-child(7) { animation-delay: 0.35s; }
+    .card:nth-child(8) { animation-delay: 0.40s; }
+
+    /* ── Card header ──────────────────────────────────────── */
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .game-name {
+      font-family: var(--display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-top: -0.45rem;
+      font-weight: 400;
+    }
+
+    /* ── Badges ───────────────────────────────────────────── */
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .badge-new     { background: var(--accent-dim);  color: var(--accent);  border: 1px solid rgba(0,255,204,0.25); }
+    .badge-op      { background: var(--red-dim);     color: var(--red);     border: 1px solid rgba(255,68,102,0.25); }
+    .badge-free    { background: var(--green-dim);   color: var(--green);   border: 1px solid rgba(57,232,143,0.25); }
+    .badge-updated { background: var(--gold-dim);    color: var(--gold);    border: 1px solid rgba(255,194,74,0.25); }
+
+    /* ── Section ──────────────────────────────────────────── */
+    .section { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Code row ─────────────────────────────────────────── */
+    .code-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 0.48rem 0.55rem 0.48rem 0.8rem;
+    }
+
+    .code-text {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .code-text.key { color: var(--purple); }
+
+    /* ── Buttons ──────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      padding: 0.28rem 0.6rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .btn:hover {
+      background: var(--accent-dim);
+      border-color: rgba(0,255,204,0.3);
+      color: var(--accent);
+    }
+
+    .btn.copied {
+      background: var(--green-dim);
+      border-color: rgba(57,232,143,0.35);
+      color: var(--green);
+    }
+
+    .btn-open:hover {
+      background: var(--purple-dim);
+      border-color: rgba(181,123,255,0.3);
+      color: var(--purple);
+    }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1.5rem 1rem 2.5rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; }
+      header { padding: 3.5rem 1rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">⬡</div>
+    <h1>ScriptHub</h1>
+    <p class="tagline">Premium Roblox scripts — grab your key, execute, dominate.</p>
+    <div class="stats">
+      <span id="script-count">0</span> Scripts
+      <span class="dot">·</span>
+      Always Updated
+      <span class="dot">·</span>
+      Free to Use
+    </div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+  <footer>ScriptHub · For educational purposes only</footer>
+
+  <script>
+    // ============================================================
+    //  SCRIPTS DATA — edit this array to add / remove / update
+    // ============================================================
+    //
+    //  Fields:
+    //    game        — card title
+    //    script      — the loadstring users will copy
+    //    keyUrl      — work.ink URL  (set to "" to hide the key row)
+    //    description — optional subtitle  (set to "" to hide)
+    //    badge       — "NEW" | "OP" | "FREE" | "UPDATED" | ""
+    //
+    // ============================================================
+
+    const SCRIPTS = [
+      {
+        game:        "Eclipse",
+        script:      `loadstring(game:HttpGet("https://example.com/eclipse.lua"))()`,
+        keyUrl:      "https://work.ink/your-eclipse-key",
+        description: "Full auto-farm & ESP",
+        badge:       "NEW",
+      },
+      {
+        game:        "Blox Fruits",
+        script:      `loadstring(game:HttpGet("https://example.com/bloxfruits.lua"))()`,
+        keyUrl:      "https://work.ink/your-bloxfruits-key",
+        description: "Auto-farm, raid helper & more",
+        badge:       "OP",
+      },
+      {
+        game:        "Pet Simulator X",
+        script:      `loadstring(game:HttpGet("https://example.com/petsim.lua"))()`,
+        keyUrl:      "https://work.ink/your-petsim-key",
+        description: "Auto-hatch & coin collector",
+        badge:       "",
+      },
+      {
+        game:        "Doors",
+        script:      `loadstring(game:HttpGet("https://example.com/doors.lua"))()`,
+        keyUrl:      "",
+        description: "Entity ESP & door skip",
+        badge:       "FREE",
+      },
+    ];
+
+    // ── Render ──────────────────────────────────────────────
+
+    const BADGE_CLASS = { NEW:"badge-new", OP:"badge-op", FREE:"badge-free", UPDATED:"badge-updated" };
+
+    const COPY_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    const CHECK_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const OPEN_ICON  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+
+    function buildCard(data, index) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.animationDelay = `${0.05 + index * 0.05}s`;
+
+      // header
+      const head = document.createElement("div");
+      head.className = "card-head";
+
+      const name = document.createElement("div");
+      name.className = "game-name";
+      name.textContent = data.game;
+      head.appendChild(name);
+
+      if (data.badge && BADGE_CLASS[data.badge]) {
+        const badge = document.createElement("span");
+        badge.className = `badge ${BADGE_CLASS[data.badge]}`;
+        badge.textContent = data.badge;
+        head.appendChild(badge);
+      }
+
+      card.appendChild(head);
+
+      // description
+      if (data.description) {
+        const desc = document.createElement("p");
+        desc.className = "desc";
+        desc.textContent = data.description;
+        card.appendChild(desc);
+      }
+
+      // script section
+      card.appendChild(buildCodeRow("Get Script", data.script, "script", null));
+
+      // key section
+      if (data.keyUrl) {
+        card.appendChild(buildCodeRow("Get Key", data.keyUrl, "key", data.keyUrl));
+      }
+
+      return card;
+    }
+
+    function buildCodeRow(labelText, value, type, linkUrl) {
+      const section = document.createElement("div");
+      section.className = "section";
+
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = labelText;
+      section.appendChild(label);
+
+      const row = document.createElement("div");
+      row.className = "code-row";
+
+      const code = document.createElement("span");
+      code.className = `code-text${type === "key" ? " key" : ""}`;
+      code.textContent = value;
+      row.appendChild(code);
+
+      // open button for keys
+      if (linkUrl) {
+        const openBtn = document.createElement("a");
+        openBtn.className = "btn btn-open";
+        openBtn.href = linkUrl;
+        openBtn.target = "_blank";
+        openBtn.rel = "noopener noreferrer";
+        openBtn.innerHTML = `${OPEN_ICON} Open`;
+        row.appendChild(openBtn);
+      }
+
+      // copy button
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "btn";
+      copyBtn.innerHTML = `${COPY_ICON} Copy`;
+      copyBtn.addEventListener("click", () => {
+        navigator.clipboard.writeText(value).then(() => {
+          copyBtn.innerHTML = `${CHECK_ICON} Copied!`;
+          copyBtn.classList.add("copied");
+          setTimeout(() => {
+            copyBtn.innerHTML = `${COPY_ICON} Copy`;
+            copyBtn.classList.remove("copied");
+          }, 2000);
+        });
+      });
+      row.appendChild(copyBtn);
+
+      section.appendChild(row);
+      return section;
+    }
+
+    // Mount
+    const grid = document.getElementById("grid");
+    SCRIPTS.forEach((s, i) => grid.appendChild(buildCard(s, i)));
+    document.getElementById("script-count").textContent = SCRIPTS.length;
+  </script>
+
+</body>
+</html>
